@@ -69,6 +69,7 @@ lemma isMatching_verts_ncard {G : SimpleGraph V} {M : G.Subgraph} (hM : M.IsMatc
   rw [Set.ncard_eq_toFinset_card', Set.ncard_eq_toFinset_card']
   simpa [Set.toFinset_card] using h1
 
+omit [Fintype V] [DecidableEq V] in
 /-- Induced-subgraph perfect matching from a subgraph matching supported on `S`. -/
 lemma hasPM_induce_of_isMatching {G : SimpleGraph V} {M : G.Subgraph}
     (hM : M.IsMatching) {S : Finset V} (hS : M.verts = (S : Set V)) :
@@ -89,6 +90,7 @@ lemma hasPM_induce_of_isMatching {G : SimpleGraph V} {M : G.Subgraph}
   intro ⟨u, _⟩ hvu
   exact Subtype.ext (huniq u hvu)
 
+omit [Fintype V] [DecidableEq V] in
 /-- Convert a perfect matching on `G.induce S` to a matching subgraph of `G` with `verts = S`. -/
 lemma exists_isMatching_of_hasPM_induce {G : SimpleGraph V} {S : Finset V}
     (h : HasPM (G.induce (S : Set V))) :

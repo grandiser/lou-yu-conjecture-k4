@@ -73,7 +73,7 @@ theorem lou_yu_k4_order_and_bounds {G : SimpleGraph V} [DecidableRel G.Adj]
   exact ⟨hcases, hge5, hle9, hbip5, h10spec, h12not8⟩
 
 /-- **Full Spectrum of `δ(G)` (`{5, 8, 9}`)**: Combining `lou_yu_k4_order_and_bounds` with
-`hLouYu2004` (the `δ(G) ≥ κ(G) ≥ 2k = 8` degree consequence of Lou & Yu 2004 Theorem 2.1 for
+`hLouYu2004` (the `δ(G) ≥ κ(G) ≥ 2k = 8` degree consequence of Lou & Yu (2004) for
 non-bipartite `k`-extendable graphs on `ν ≤ 4k` vertices), the minimum degree of `G` belongs
 to `{5, 8, 9}`. -/
 theorem lou_yu_k4_minDegree_spectrum {G : SimpleGraph V} [DecidableRel G.Adj]

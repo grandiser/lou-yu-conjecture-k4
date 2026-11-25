@@ -18,6 +18,7 @@ section HelperLemmas
 
 variable {V : Type*} [Fintype V] [DecidableEq V]
 
+omit [Fintype V] [DecidableEq V] in
 lemma induce_compl_eq_compl_induce (G : SimpleGraph V) (S : Set V) :
     (Gᶜ.induce S)ᶜ = G.induce S := by
   ext ⟨u, hu⟩ ⟨v, hv⟩
@@ -25,13 +26,16 @@ lemma induce_compl_eq_compl_induce (G : SimpleGraph V) (S : Set V) :
     Classical.not_not]
   exact ⟨fun h => h.2 h.1, fun h => ⟨h.ne, fun _ => h⟩⟩
 
+omit [Fintype V] [DecidableEq V] in
 lemma hasPM_induce_iff_compl (G : SimpleGraph V) (S : Finset V) :
     HasPM (G.induce (S : Set V)) ↔ HasPM ((Gᶜ.induce (S : Set V))ᶜ) := by
   rw [induce_compl_eq_compl_induce]
 
+omit [Fintype V] [DecidableEq V] in
 lemma card_coe_finset_set (S : Finset V) : Fintype.card (S : Set V) = S.card := by
   simp
 
+omit [DecidableEq V] in
 lemma degree_congr {H₁ H₂ : SimpleGraph V} [DecidableRel H₁.Adj] [DecidableRel H₂.Adj]
     (h : H₁ = H₂) (v : V) : H₁.degree v = H₂.degree v := by
   subst h
@@ -87,6 +91,7 @@ lemma degree_induce_le (F : SimpleGraph V) [DecidableRel F.Adj] (S : Finset V)
     SimpleGraph.card_neighborFinset_eq_degree, SimpleGraph.card_neighborFinset_eq_degree] at hcard
   exact hcard
 
+omit [DecidableEq V] in
 lemma card_adj_pairs (H : SimpleGraph V) [DecidableRel H.Adj] :
     (Finset.univ.filter fun p : V × V => H.Adj p.1 p.2).card = ∑ u : V, H.degree u := by
   rw [Finset.card_filter, Fintype.sum_prod_type]
@@ -96,6 +101,7 @@ lemma card_adj_pairs (H : SimpleGraph V) [DecidableRel H.Adj] :
     ext v; simp [SimpleGraph.mem_neighborFinset]
   rw [hfeq, SimpleGraph.card_neighborFinset_eq_degree]
 
+omit [Fintype V] [DecidableEq V] in
 lemma compl_deleteEdges_singleton {G : SimpleGraph V} {u v : V} (huv : G.Adj u v) :
     (G.deleteEdges {s(u, v)})ᶜ = Gᶜ ⊔ SimpleGraph.edge u v := by
   ext x y
@@ -119,6 +125,7 @@ lemma compl_deleteEdges_singleton {G : SimpleGraph V} {u v : V} (huv : G.Adj u v
     · exact ⟨huv.ne, fun h => h.2 rfl⟩
     · exact ⟨huv.ne.symm, fun h => h.2 Sym2.eq_swap⟩
 
+omit [Fintype V] [DecidableEq V] in
 lemma sup_edge_adj_iff {F : SimpleGraph V} {u v x y : V} :
     (F ⊔ SimpleGraph.edge u v).Adj x y ↔ F.Adj x y ∨ ((x = u ∧ y = v) ∨ (x = v ∧ y = u)) ∧ x ≠ y := by
   simp [SimpleGraph.sup_adj, SimpleGraph.edge_adj]
@@ -134,6 +141,7 @@ lemma hasPM_induce_eight_of_compl_le_three {G : SimpleGraph V} [DecidableRel G�
   · intro w
     exact le_trans (degree_induce_le Gᶜ W w) (hdeg w.val)
 
+omit [Fintype V] in
 lemma not_hasPM_pair_of_not_adj {G : SimpleGraph V} {u v : V} (hna : ¬ G.Adj u v) :
     ¬ HasPM (G.induce (({u, v} : Finset V) : Set V)) := by
   rintro ⟨P, hPM, hPspan⟩
@@ -144,6 +152,7 @@ lemma not_hasPM_pair_of_not_adj {G : SimpleGraph V} {u v : V} (hna : ¬ G.Adj u 
   · exact hGadj.ne rfl
   · exact hna hGadj
 
+omit [Fintype V] [DecidableEq V] in
 lemma not_hasPM_of_isolated {G : SimpleGraph V} {S : Finset V} {v : V} (hv : v ∈ S)
     (hiso : ∀ w ∈ S, ¬ G.Adj v w) :
     ¬ HasPM (G.induce (S : Set V)) := by
@@ -151,6 +160,7 @@ lemma not_hasPM_of_isolated {G : SimpleGraph V} {S : Finset V} {v : V} (hv : v �
   obtain ⟨⟨w, hw⟩, hadj, _⟩ := hPM (hPspan ⟨v, hv⟩)
   exact hiso w hw hadj.adj_sub
 
+omit [Fintype V] in
 /-- If `Gᶜ` has a clique `Q` inside `S` with `2 * Q.card > S.card`, then `G.induce S` has no PM. -/
 lemma not_hasPM_of_compl_clique {G : SimpleGraph V} {S Q : Finset V}
     (hQS : Q ⊆ S) (hbig : S.card < 2 * Q.card) (hcl : Gᶜ.IsClique (Q : Set V)) :
@@ -186,6 +196,7 @@ lemma not_hasPM_of_compl_clique {G : SimpleGraph V} {S Q : Finset V}
   rw [Finset.card_sdiff_of_subset hQS] at hle
   omega
 
+omit [Fintype V] in
 /-- If `S = A ∪ B` with `A, B` disjoint, `Odd A.card`, and `A` completely joined to `B` in `Gᶜ`
 (so no `G`-edge crosses between `A` and `B`), then `G.induce S` has no PM. -/
 lemma not_hasPM_of_compl_bip {G : SimpleGraph V} {S A B : Finset V}
@@ -227,7 +238,7 @@ lemma degree_sup_edge_le (F : SimpleGraph V) [DecidableRel F.Adj] (u v x : V)
     (F ⊔ SimpleGraph.edge u v).degree x ≤ F.degree x + (if x = u ∨ x = v then 1 else 0) := by
   classical
   by_cases hx : x = u ∨ x = v
-  · rw [if_pos hx]
+  · simp only [hx, ↓reduceIte]
     rcases hx with rfl | rfl
     · have hsub : (F ⊔ SimpleGraph.edge x v).neighborFinset x ⊆ insert v (F.neighborFinset x) := by
         intro w hw
@@ -251,7 +262,7 @@ lemma degree_sup_edge_le (F : SimpleGraph V) [DecidableRel F.Adj] (u v x : V)
       have hc := Finset.card_le_card hsub
       rw [SimpleGraph.card_neighborFinset_eq_degree] at hc
       exact le_trans hc (by simpa [SimpleGraph.card_neighborFinset_eq_degree] using Finset.card_insert_le u (F.neighborFinset x))
-  · rw [if_neg hx, add_zero]
+  · simp only [hx, ↓reduceIte, add_zero]
     push Not at hx
     have hsub : (F ⊔ SimpleGraph.edge u v).neighborFinset x ⊆ F.neighborFinset x := by
       intro w hw
@@ -421,7 +432,7 @@ section Order14
 
 variable {V : Type*} [Fintype V] [DecidableEq V]
 
-/-- **Gan–Huang Lemma 5.9 (via `exists_tutte_odd_partition`)**:
+/-- **Adapted from Gan–Huang Lemma 5.9 (`k = 4` analogue, via `exists_tutte_odd_partition`)**:
 Suppose `F` has `Δ(F) ≤ 3`, no `K₄`, and no `K₃,₃`. If `u ≠ v`, `¬ F.Adj u v`, and `S` is a
 6-set containing `u, v` such that `((F ⊔ edge u v).induce S)ᶜ` has no PM, then one of:
 1. `K₄ - uv`,
@@ -572,9 +583,9 @@ lemma obstructed_edge_six_cases {F : SimpleGraph V} [DecidableRel F.Adj]
       simp only [hScard, hBc, Finset.card_singleton] at h1
       omega
     have hauv : a.val = u ∨ a.val = v := by
-      by_contra h; have h1 := hXdeg a; rw [if_neg h] at h1; omega
+      by_contra h; have h1 := hXdeg a; simp only [h, ↓reduceIte] at h1; omega
     have hbuv : b.val = u ∨ b.val = v := by
-      by_contra h; have h1 := hXdeg b; rw [if_neg h] at h1; omega
+      by_contra h; have h1 := hXdeg b; simp only [h, ↓reduceIte] at h1; omega
     have hab_val : a.val ≠ b.val := fun h => hab (Subtype.ext h)
     let R : Finset (S : Set V) := (B ∪ {a, b})ᶜ
     have haB : a ∉ B := Finset.disjoint_left.mp (hCdisj {a} hc₁C) (by simp)

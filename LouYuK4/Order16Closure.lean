@@ -24,6 +24,7 @@ variable {V : Type*} [Fintype V] [DecidableEq V]
 def HasBad8 (F : SimpleGraph V) : Prop :=
   HasClique F 5 ∨ HasCliqueJoin F 3 3 ∨ HasK F 3 5
 
+omit [Fintype V] in
 /-- On an 8-set `S`, if `Gᶜ` contains `K₃ ∨ 3K₁` inside `S`, then `G.induce S` has no PM. -/
 lemma not_hasPM_eight_of_hasCliqueJoin33 {G : SimpleGraph V} {S A B : Finset V}
     (hS : S.card = 8) (hAS : A ⊆ S) (hBS : B ⊆ S)
@@ -64,6 +65,7 @@ lemma not_hasPM_eight_of_hasCliqueJoin33 {G : SimpleGraph V} {S A B : Finset V}
   rw [Finset.card_sdiff_of_subset hABsub, Finset.card_union_of_disjoint hdisj, hS, hA3, hB3] at hle
   omega
 
+omit [Fintype V] [DecidableEq V] in
 /-- Lifting `HasClique`, `HasCliqueJoin`, `HasK`, and `HasBad8` from `F.induce S` to `F`. -/
 lemma hasClique_of_induce {F : SimpleGraph V} {S : Finset V} {r : ℕ}
     (h : HasClique (F.induce (S : Set V)) r) : HasClique F r := by
@@ -75,6 +77,7 @@ lemma hasClique_of_induce {F : SimpleGraph V} {S : Finset V} {r : ℕ}
   obtain ⟨a, ha, rfl⟩ := hx; obtain ⟨b, hb, rfl⟩ := hy
   exact hcl ha hb (fun he => hxy (congrArg Subtype.val he))
 
+omit [Fintype V] [DecidableEq V] in
 lemma hasCliqueJoin_of_induce {F : SimpleGraph V} {S : Finset V} {a b : ℕ}
     (h : HasCliqueJoin (F.induce (S : Set V)) a b) : HasCliqueJoin F a b := by
   classical
@@ -95,6 +98,7 @@ lemma hasCliqueJoin_of_induce {F : SimpleGraph V} {S : Finset V} {a b : ℕ}
     obtain ⟨p, hp, rfl⟩ := hx; obtain ⟨q, hq, rfl⟩ := hy
     exact hadj p hp q hq
 
+omit [Fintype V] [DecidableEq V] in
 lemma hasK_of_induce {F : SimpleGraph V} {S : Finset V} {a b : ℕ}
     (h : HasK (F.induce (S : Set V)) a b) : HasK F a b := by
   classical
@@ -111,6 +115,7 @@ lemma hasK_of_induce {F : SimpleGraph V} {S : Finset V} {a b : ℕ}
     obtain ⟨p, hp, rfl⟩ := hx; obtain ⟨q, hq, rfl⟩ := hy
     exact hadj p hp q hq
 
+omit [Fintype V] [DecidableEq V] in
 lemma hasBad8_of_induce {F : SimpleGraph V} {S : Finset V}
     (h : HasBad8 (F.induce (S : Set V))) : HasBad8 F := by
   rcases h with h1 | h2 | h3
@@ -221,6 +226,7 @@ lemma not_hasPM_eight_iff_hasBad8 {G : SimpleGraph V} [DecidableRel Gᶜ.Adj]
       (fun w => le_trans (degree_induce_le Gᶜ S w) (hdeg w.val)) hno
   · exact not_hasPM_eight_of_hasBad8 hS
 
+omit [DecidableEq V] in
 /-- Useful helper: if `u` has degree `≤ 5` in `H` and is adjacent to every vertex of a 5-set `T`,
 then `H.neighborFinset u = T` (so `u` has no neighbors outside `T`). -/
 lemma neighborFinset_eq_of_subset_card_five {H : SimpleGraph V} [DecidableRel H.Adj]
@@ -1200,10 +1206,10 @@ theorem nu_eq_16_no_bad_eight {G : SimpleGraph V} [DecidableRel G.Adj]
               hB5, SimpleGraph.card_neighborFinset_eq_degree] at hc
             exact hc
           have hp12 : p.val = a₁ ∨ p.val = a₂ := by
-            by_contra h; have h1 := degree_sup_edge_le F a₁ a₂ p.val; rw [if_neg h] at h1
+            by_contra h; have h1 := degree_sup_edge_le F a₁ a₂ p.val; simp only [h, ↓reduceIte] at h1
             have := hcdeg p.val; omega
           have hq12 : q.val = a₁ ∨ q.val = a₂ := by
-            by_contra h; have h1 := degree_sup_edge_le F a₁ a₂ q.val; rw [if_neg h] at h1
+            by_contra h; have h1 := degree_sup_edge_le F a₁ a₂ q.val; simp only [h, ↓reduceIte] at h1
             have := hcdeg q.val; omega
           have hpq_val : p.val ≠ q.val := fun h => hpq (Subtype.ext h)
           obtain ⟨b, hb⟩ := Finset.card_pos.mp (by omega : 0 < B.card)
@@ -1232,7 +1238,7 @@ theorem nu_eq_16_no_bad_eight {G : SimpleGraph V} [DecidableRel G.Adj]
               hA3, hB3, SimpleGraph.card_neighborFinset_eq_degree] at hc
             exact hc
           have hu12 : u.val = a₁ ∨ u.val = a₂ := by
-            by_contra h; have h1 := degree_sup_edge_le F a₁ a₂ u.val; rw [if_neg h] at h1
+            by_contra h; have h1 := degree_sup_edge_le F a₁ a₂ u.val; simp only [h, ↓reduceIte] at h1
             have := hcdeg u.val; omega
           -- The other vertex (say v) MUST lie in A ∪ B (else u has 6 neighbors in F, impossible!)
           have hv_in : ∀ (u₀ v₀ : V), u.val = u₀ → ((u₀ = a₁ ∧ v₀ = a₂) ∨ (u₀ = a₂ ∧ v₀ = a₁)) →

@@ -1,0 +1,17 @@
+cff-version: 1.2.0
+message: "If you use or refer to this Lean 4 formalization, please cite it as below."
+title: "A Lean 4 proof of the Lou and Yu conjecture for k = 4"
+type: software
+authors:
+  - family-names: Baida
+    given-names: Imad
+repository-code: "https://github.com/grandiser/lou-yu-conjecture-k4"
+license: Apache-2.0
+date-released: "2026-11-25"
+keywords:
+  - graph-theory
+  - matching-extension
+  - k-extendable-graphs
+  - lou-yu-conjecture
+  - lean4
+  - formal-verification

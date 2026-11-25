@@ -86,7 +86,7 @@ theorem exists_tutte_odd_partition {H : SimpleGraph V}
   classical
   have hviol : ∃ u : Set V, H.IsTutteViolator u := by
     by_contra h
-    push_neg at h
+    push Not at h
     exact hno ((SimpleGraph.tutte (G := H)).mpr h)
   obtain ⟨u, hu⟩ := hviol
   let Gdel := ((⊤ : H.Subgraph).deleteVerts u).coe
@@ -127,7 +127,7 @@ theorem exists_tutte_odd_partition {H : SimpleGraph V}
     have hcard_del : Nat.card ((⊤ : H.Subgraph).deleteVerts u).verts + S.card = Fintype.card V := by
       have hset : ((⊤ : H.Subgraph).deleteVerts u).verts = ((Sᶜ : Finset V) : Set V) := by
         ext x
-        simp [S, Subgraph.deleteVerts_verts]
+        simp [S]
       rw [Nat.card_coe_set_eq, hset, Set.ncard_coe_finset, Finset.card_compl]
       exact Nat.sub_add_cancel (Finset.card_le_univ S)
     obtain ⟨m, hm⟩ := heven
@@ -201,7 +201,8 @@ theorem exists_tutte_odd_partition {H : SimpleGraph V}
     simp only [proj, Finset.mem_image, Finset.mem_filter, Finset.mem_univ, true_and] at hv
     obtain ⟨x, hx, rfl⟩ := hv
     have hw_del : w ∈ ((⊤ : H.Subgraph).deleteVerts u).verts := by
-      simp [Subgraph.deleteVerts_verts]
+      simp only [Subgraph.deleteVerts_verts, Subgraph.verts_top, Set.mem_sdiff, Set.mem_univ,
+        true_and]
       intro hwu
       exact hwS (by simpa [S] using hwu)
     let y : ((⊤ : H.Subgraph).deleteVerts u).verts := ⟨w, hw_del⟩
@@ -221,7 +222,7 @@ theorem exists_tutte_odd_partition {H : SimpleGraph V}
 /-- In a Tutte odd partition, if `X = Hᶜ` has `deg_X(v) ≤ d` for all `v ∈ c`, then
 `Fintype.card V - S.card - c.card ≤ d`. -/
 lemma card_compl_sub_le_deg_of_tutte {X : SimpleGraph V} [DecidableRel X.Adj]
-    {S c : Finset V} {v : V} (hv : v ∈ c) (hdisj : Disjoint c S)
+    {S c : Finset V} {v : V} (_hv : v ∈ c) (hdisj : Disjoint c S)
     (hadj : ∀ w : V, w ∉ S → w ∉ c → X.Adj v w) :
     Fintype.card V - S.card - c.card ≤ X.degree v := by
   have hsub : (S ∪ c)ᶜ ⊆ X.neighborFinset v := by
@@ -233,6 +234,7 @@ lemma card_compl_sub_le_deg_of_tutte {X : SimpleGraph V} [DecidableRel X.Adj]
   rw [Finset.card_compl, Finset.card_union_of_disjoint hdisj.symm, SimpleGraph.card_neighborFinset_eq_degree] at hcard
   omega
 
+omit [Fintype V] in
 /-- Pick one element from each of `k` distinct pairwise-disjoint nonempty Finsets to form a
 `k`-clique in `X`. -/
 lemma hasClique_of_disjoint_sets {X : SimpleGraph V} {D : Finset (Finset V)} {k : ℕ}
@@ -267,8 +269,8 @@ section SmallOrders
 
 variable {V : Type*} [Fintype V] [DecidableEq V]
 
-/-- **Gan–Huang Lemma 3.4**: On 4 vertices, if `Xᶜ` has no PM then `X` contains a `K₃` or
-a vertex of degree `3` (a `K_{1,3}`). -/
+/-- **Gan–Huang Lemma 3.4 (necessity direction)**: On 4 vertices, if `Xᶜ` has no PM then `X`
+contains a `K₃` or a vertex of degree `3` (a `K_{1,3}`). -/
 theorem not_hasPM_four {X : SimpleGraph V} [DecidableRel X.Adj]
     (hV : Fintype.card V = 4) (hno : ¬ HasPM Xᶜ) :
     HasClique X 3 ∨ ∃ v : V, X.degree v = 3 := by
@@ -286,7 +288,7 @@ theorem not_hasPM_four {X : SimpleGraph V} [DecidableRel X.Adj]
   · -- |S| = 0, C.card ≥ 2, sum ≤ 4. Some c ∈ C must have card 1!
     have hex1 : ∃ c ∈ C, c.card = 1 := by
       by_contra hall
-      push_neg at hall
+      push Not at hall
       have hge3 : ∀ c ∈ C, 3 ≤ c.card := by
         intro c hc
         obtain ⟨k, hk⟩ := hCodd c hc
@@ -443,8 +445,8 @@ theorem hasPM_six_of_compl_le_two {X : SimpleGraph V} [DecidableRel X.Adj]
   exact hasPM_six_of_deg_le_two_except_two hV u u (fun w _ _ => hdeg w)
     (le_trans (hdeg u) (by omega)) (le_trans (hdeg u) (by omega))
 
-/-- **Gan–Huang Lemma 5.4**: On 6 vertices, if `Δ(X) ≤ 3` and `Xᶜ` has no PM, then `X`
-contains `K₄` or `K₃,₃`. -/
+/-- **Gan–Huang Lemma 5.4 (necessity direction)**: On 6 vertices, if `Δ(X) ≤ 3` and `Xᶜ` has no
+PM, then `X` contains `K₄` or `K₃,₃`. -/
 theorem not_hasPM_six_of_compl_le_three {X : SimpleGraph V} [DecidableRel X.Adj]
     (hV : Fintype.card V = 6) (hdeg : ∀ w : V, X.degree w ≤ 3) (hno : ¬ HasPM Xᶜ) :
     HasClique X 4 ∨ HasK X 3 3 := by
@@ -554,7 +556,7 @@ theorem hasPM_eight_of_compl_le_three {X : SimpleGraph V} [DecidableRel X.Adj]
         _ ≤ ∑ c ∈ C, c.card := Finset.sum_le_sum hge3
     omega
 
-/-- **New Lemma 8.1 (8-vertex Tutte classification for `Δ(X) ≤ 6`)**:
+/-- **8-vertex Tutte classification for `Δ(X) ≤ 6`**:
 If `card V = 8`, `Δ(X) ≤ 6`, and `Xᶜ` has no perfect matching, then `X` contains one of:
 1. `K₅`,
 2. `K₃ ∨ 3K₁`,
@@ -583,7 +585,7 @@ theorem not_hasPM_eight_of_compl_le_six {X : SimpleGraph V} [DecidableRel X.Adj]
   -- If C.card ≥ 5, we immediately get K₅!
   by_cases hC5 : 5 ≤ C.card
   · exact Or.inl (hasClique_of_disjoint_sets hC5 hCne hCpair hCadj)
-  push_neg at hC5
+  push Not at hC5
   have hSbound : S.card ≤ 2 := by omega
   interval_cases hSc : S.card
   · -- |S| = 0, C.card ∈ {2, 3, 4}, sum ≤ 8.
@@ -611,7 +613,7 @@ theorem not_hasPM_eight_of_compl_le_six {X : SimpleGraph V} [DecidableRel X.Adj]
     -- which are ALSO adjacent in X to all of A! So A (size 3) is complete to Aᶜ (size 5) => K_{3,5}!
     have hex3 : ∃ c ∈ C, c.card = 3 := by
       by_contra hno3
-      push_neg at hno3
+      push Not at hno3
       have hA5 : 5 ≤ A.card := by obtain ⟨k, hk⟩ := hCodd A hA; have := hno3 A hA; omega
       have hB5 : 5 ≤ B.card := by obtain ⟨k, hk⟩ := hCodd B hB; have := hno3 B hB; omega
       omega

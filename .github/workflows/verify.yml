@@ -4,13 +4,20 @@ on:
   push:
   pull_request:
 
+permissions:
+  contents: read
+
 jobs:
   lean-proof:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: leanprover/lean-action@v1
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: leanprover/lean-action@ba3fdfe5c4476c925da13bf11a005ddb47e47aee # v1
         with:
           build-args: LouYuK4
-      - name: Check axioms and forbidden tokens
+          leanchecker: true
+          leanchecker-args: LouYuK4
+          axiom-audit: true
+          axiom-audit-root: LouYuK4
+      - name: Run local verification script
         run: ./verify.sh --skip-build
